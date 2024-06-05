@@ -15,7 +15,7 @@ class SpectrometerInput(QWidget):
         config = configparser.ConfigParser()
         config.read(ini_file, encoding='utf-8')
         self.main_window.setWindowTitle(config.get('Settings', 'window_title'))
-        self.labLabel = QLabel(f"Лаборант {self.fullName}", self)
+        self.infoLabel = QLabel(f"Лаборант {self.fullName}", self)
         self.label = QLabel(config.get('Settings', 'prompt'), self)
         self.lineEdit = QLineEdit(self)
 
@@ -34,7 +34,7 @@ class SpectrometerInput(QWidget):
         self.buttonLayout.addWidget(self.nextButton)
 
         self.layout = QVBoxLayout()
-        self.layout.addWidget(self.labLabel)
+        self.layout.addWidget(self.infoLabel)
         self.layout.addWidget(self.label)
         self.layout.addWidget(self.lineEdit)
         self.layout.addLayout(self.buttonLayout)
@@ -49,8 +49,8 @@ class SpectrometerInput(QWidget):
 
     def apply_spectrometer(self):
         self.spectrometerName = self.lineEdit.text()
-        self.labLabel.setText(f"Лаборант {self.fullName}\nСпектрометр: {self.spectrometerName}")
+        self.infoLabel.setText(f"Лаборант {self.fullName}\nСпектрометр: {self.spectrometerName}")
 
     def next_stage(self):
-        #self.spectrometerName = self.lineEdit.text()
-        self.labLabel.setText(f"Переход к следующему этапу с названием спектрометра: {self.spectrometerName}")
+        self.spectrometerName = self.lineEdit.text()
+        main.start_third_stage(self.main_window, self.fullName, self.spectrometerName)

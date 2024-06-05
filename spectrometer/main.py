@@ -1,22 +1,10 @@
 import sys
 from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QHBoxLayout, QPushButton, QVBoxLayout
 import firstStage
+import fourthStage
 import secondStage
 import generalMenu
-
-
-class ButtonPanel(QWidget):
-    def __init__(self, parent=None):
-        super().__init__(parent)
-        self.init_ui()
-
-    def init_ui(self):
-        layout = QHBoxLayout()
-        for i in range(4):
-            button = QPushButton(f'Button {i+1}', self)
-            button.setFixedSize(50, 50)  # Set the size of the buttons to be square
-            layout.addWidget(button)
-        self.setLayout(layout)
+import thirdStage
 
 
 class MainWindow(QMainWindow):
@@ -28,17 +16,6 @@ class MainWindow(QMainWindow):
 
         central_widget = QWidget(self)
         self.setCentralWidget(central_widget)
-
-        # Create the main layout
-        main_layout = QVBoxLayout(central_widget)
-
-        # Add the button panel at the top
-        self.button_panel = ButtonPanel(self)
-        main_layout.addWidget(self.button_panel)
-
-        # Create a placeholder for the main content
-        self.content_area = QWidget(self)
-        main_layout.addWidget(self.content_area)
 
 
     def setWindowTitle(self, title):
@@ -60,6 +37,14 @@ def start_first_stage(main_window):
 
 def start_second_stage(main_window, fio):
     main_window.setCentralWidget(secondStage.SpectrometerInput(fio, 'config2Stage.ini', main_window))
+
+
+def start_third_stage(main_window, fio, spectrometer):
+    main_window.setCentralWidget(thirdStage.SampleInput(fio, spectrometer, 'config3Stage.ini', main_window))
+
+
+def start_fourth_stage(main_window, fio, spectrometer, sample):
+    main_window.setCentralWidget(fourthStage.KeyInput(fio, spectrometer, sample, 'config4Stage.ini', main_window))
 
 
 if __name__ == '__main__':
