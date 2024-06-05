@@ -26,13 +26,17 @@ class FIOInput(QWidget):
 
         self.applyButton = QPushButton(config['ApplyButton']['text'], self)
         self.applyButton.clicked.connect(self.apply_full_name)
+        self.applyButton.setFixedSize(320, 50)
 
         self.nextButton = QPushButton(config['NextButton']['text'], self)
         self.nextButton.clicked.connect(self.next_stage)
+        self.nextButton.setFixedSize(320, 50)
 
         button_layout = QHBoxLayout()
         button_layout.addWidget(self.applyButton)
         button_layout.addWidget(self.nextButton)
+        button_layout.setSpacing(25)
+        button_layout.setContentsMargins(0,25,0,0)
 
         layout = QVBoxLayout()
         layout.addWidget(self.label)

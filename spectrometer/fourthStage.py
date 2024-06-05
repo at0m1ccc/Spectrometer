@@ -1,5 +1,6 @@
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QWidget, QLabel, QLineEdit, QHBoxLayout, QVBoxLayout, QPushButton, QComboBox
+from PyQt5.QtGui import QFont
 import main
 import configparser
 
@@ -17,10 +18,15 @@ class KeyInput(QWidget):
         config = configparser.ConfigParser()
         config.read(ini_file, encoding='utf-8')
         self.main_window.setWindowTitle(config.get('Settings', 'window_title'))
+
         self.infoLabel = QLabel(f"Лаборант: {self.fullName}\nСпектрометр: {self.spectrometerName}\nПроба: {self.sampleName}", self)
+        self.infoLabel.setFont(QFont("Arial", 10))
+
         # self.lineEdit = QLineEdit(self)
         self.key2Label = QLabel("Ключ 2:")
+        self.key2Label.setFont(QFont("Arial", 10))
         self.key4Label = QLabel("Ключ 4:")
+        self.key4Label.setFont(QFont("Arial", 10))
         self.key2 = QComboBox(self)
         self.key4 = QComboBox(self)
 
@@ -53,8 +59,13 @@ class KeyInput(QWidget):
         self.buttonLayout.addWidget(self.backButton)
         self.buttonLayout.addWidget(self.nextButton)
 
+        self.infomation = QHBoxLayout()
+        self.infomation.addStretch()
+        self.infomation.addWidget(self.infoLabel)
+        self.infomation.addStretch()
+
         self.layout = QVBoxLayout()
-        self.layout.addWidget(self.infoLabel)
+        self.layout.addLayout(self.infomation)
         self.layout.addWidget(self.messageLabel)
         self.layout.addLayout(self.keysLabel)
         self.layout.addLayout(self.buttonLayout)
