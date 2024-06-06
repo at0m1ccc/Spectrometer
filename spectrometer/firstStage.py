@@ -1,17 +1,15 @@
-import configparser
-
 from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QWidget, QLabel, QLineEdit, QHBoxLayout, QVBoxLayout, QPushButton
-
+from PyQt5.QtWidgets import QWidget, QLabel, QLineEdit, QHBoxLayout, QVBoxLayout, QPushButton, QComboBox
+import configparser
 import main
 
 
 class FIOInput(QWidget):
-    def __init__(self, ini_file,  main_window):
+    def __init__(self, ini_file, main_window):
         super().__init__()
         self.main_window = main_window
-        self.init_ui(ini_file)
         self.fullName = None
+        self.init_ui(ini_file)
 
     def init_ui(self, ini_file):
         config = configparser.ConfigParser()
@@ -21,8 +19,12 @@ class FIOInput(QWidget):
 
         self.label = QLabel(config['Label']['text'], self)
         self.label.setAlignment(Qt.AlignCenter)
-        self.lineEdit = QLineEdit(self)
+        self.lineEdit = QComboBox(self)
         self.messageLabel = QLabel(config['MessageLabel']['text'], self)
+
+        laborants = config.get('LineEdit', 'laborants').split(',')
+        for laborant in laborants:
+            self.lineEdit.addItem(laborant.strip())
 
         self.applyButton = QPushButton(config['ApplyButton']['text'], self)
         self.applyButton.clicked.connect(self.apply_full_name)
@@ -36,7 +38,7 @@ class FIOInput(QWidget):
         button_layout.addWidget(self.applyButton)
         button_layout.addWidget(self.nextButton)
         button_layout.setSpacing(25)
-        button_layout.setContentsMargins(0,25,0,0)
+        button_layout.setContentsMargins(0, 25, 0, 0)
 
         layout = QVBoxLayout()
         layout.addWidget(self.label)
@@ -47,17 +49,15 @@ class FIOInput(QWidget):
         self.setLayout(layout)
 
     def apply_full_name(self):
-        if self.lineEdit.text() != '':
-            self.fullName = self.lineEdit.text()
+        self.fullName = self.lineEdit.currentText()
+        if self.fullName:
             self.messageLabel.setText('ФИО применено: ' + self.fullName)
         else:
-            self.messageLabel.setText('Сначала введите фио!')
+            self.messageLabel.setText('Сначала выберите фио!')
 
     def next_stage(self):
-        if self.lineEdit.text() == '' and self.fullName is None:
-            self.messageLabel.setText('Сначала введите фио!')
+        if not self.fullName:
+            self.messageLabel.setText('Сначала выберите фио!')
             return
-        elif self.lineEdit.text() is not None and self.fullName is None:
-            self.fullName = self.lineEdit.text()
 
         main.start_second_stage(self.main_window, self.fullName)
