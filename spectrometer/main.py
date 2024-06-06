@@ -11,7 +11,7 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("My Application")
-        self.setFixedSize(1010, 640)
+        self.setFixedSize(700, 300)
         self.central_widget = None
 
         central_widget = QWidget(self)

@@ -15,15 +15,19 @@ class GeneralMenu(QWidget):
 
         self.infoButton = QPushButton(config['InfoButton']['text'])
         self.infoButton.setFixedSize(int(config['InfoButton']['size']), int(config['InfoButton']['size']))
+        self.infoButton.setFixedSize(150,100)
 
         self.stagesButton = QPushButton(config['StagesButton']['text'])
         self.stagesButton.setFixedSize(int(config['StagesButton']['size']), int(config['StagesButton']['size']))
+        self.stagesButton.setFixedSize(150,100)
 
         self.configButton = QPushButton(config['ConfigButton']['text'])
         self.configButton.setFixedSize(int(config['ConfigButton']['size']), int(config['ConfigButton']['size']))
+        self.configButton.setFixedSize(150,100)
 
         self.updateButton = QPushButton(config['UpdateButton']['text'])
         self.updateButton.setFixedSize(int(config['UpdateButton']['size']), int(config['UpdateButton']['size']))
+        self.updateButton.setFixedSize(150,100)
 
 
         hbox_buttons = QHBoxLayout()
