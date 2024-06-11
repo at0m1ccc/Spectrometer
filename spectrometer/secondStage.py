@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QWidget, QLabel, QLineEdit, QHBoxLayout, QVBoxLayout, QPushButton
+from PyQt5.QtWidgets import QWidget, QLabel, QLineEdit, QHBoxLayout, QVBoxLayout, QPushButton, QComboBox
 from PyQt5.QtGui import QFont
 import main
 import configparser
@@ -24,15 +24,18 @@ class SpectrometerInput(QWidget):
         self.label = QLabel(config.get('Settings', 'prompt'), self)
         self.label.setFont(font)
 
-        self.lineEdit = QLineEdit(self)
+        self.spectrometers = QComboBox(self)
+        list_spectrs = config.get('Settings', 'spectrometers').split(",")
+        for spectrometer in list_spectrs:
+            self.spectrometers.addItem(spectrometer)
 
         self.backButton = QPushButton(config.get('Buttons', 'back'), self)
         self.backButton.clicked.connect(self.go_back)
-        self.backButton.setFixedSize(210,50)
+        self.backButton.setFixedSize(210, 50)
 
         self.applyButton = QPushButton(config.get('Buttons', 'apply'), self)
         self.applyButton.clicked.connect(self.apply_spectrometer)
-        self.applyButton.setFixedSize(210,50)
+        self.applyButton.setFixedSize(210, 50)
 
         self.nextButton = QPushButton(config.get('Buttons', 'next'), self)
         self.nextButton.clicked.connect(self.next_stage)
@@ -57,7 +60,7 @@ class SpectrometerInput(QWidget):
         self.layout = QVBoxLayout()
         self.layout.addLayout(self.layout3)
         self.layout.addLayout(self.layout2)
-        self.layout.addWidget(self.lineEdit)
+        self.layout.addWidget(self.spectrometers)
         self.layout.addLayout(self.buttonLayout)
 
         self.setLayout(self.layout)
@@ -69,9 +72,15 @@ class SpectrometerInput(QWidget):
         main.start_first_stage(self.main_window)
 
     def apply_spectrometer(self):
-        main.info["spectrometer"] = self.lineEdit.text()
-        self.infoLabel.setText(f"Лаборант {main.info["fullName"]}\nСпектрометр: {main.info["spectrometer"]}")
+        main.info["spectrometer"] = self.spectrometers.currentText()
+        if main.info["spectrometer"]:
+            self.infoLabel.setText(f"Лаборант {main.info["fullName"]}\n{main.info["spectrometer"]}")
+        else:
+            self.messageLabel.setText('Сначала выберите cпектрометр!')
 
     def next_stage(self):
-        main.info["spectrometer"] = self.lineEdit.text()
-        main.start_third_stage(self.main_window)
+        main.info["spectrometer"] = self.spectrometers.currentText()
+        if main.info["spectrometer"]:
+            main.start_third_stage(self.main_window)
+        else:
+            self.messageLabel.setText('Сначала выберите cпектрометр!')

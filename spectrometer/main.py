@@ -1,11 +1,14 @@
 import os
 import sys
 from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QHBoxLayout, QPushButton, QVBoxLayout
+
+import fifthStage
 import firstStage
 import fourthStage
 import secondStage
 import generalMenu
 import thirdStage
+import portalocker
 import configparser
 
 NumberStage = 0
@@ -53,6 +56,18 @@ def start_fourth_stage(main_window):
     main_window.setCentralWidget(fourthStage.KeyInput(
         os.path.join(os.path.dirname(__file__), 'config4Stage.ini'), main_window))
 
+
+def start_fifth_stage(main_window):
+    main_window.setCentralWidget(fifthStage.OutputStage(
+        os.path.join(os.path.dirname(__file__), 'config5Stage.ini'), main_window))
+
+def singleton(lockfile):
+    fp = open()
+
+checkproc = os.popen('ps aux|grep %s' % __file__).read()
+
+if checkproc.count('python') > 1:
+    os._exit(1)
 
 if __name__ == '__main__':
     main()

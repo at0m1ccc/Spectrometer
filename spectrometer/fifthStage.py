@@ -3,11 +3,12 @@ from PyQt5.QtWidgets import QWidget, QLabel, QLineEdit, QHBoxLayout, QVBoxLayout
 from PyQt5.QtGui import QFont
 import main
 import configparser
+from datetime import datetime
 
 
-class KeyInput(QWidget):
+class OutputStage(QWidget):
     def __init__(self, ini_file, main_window):
-        main.NumberStage = 4
+        main.NumberStage = 5
         super().__init__()
         self.main_window = main_window
         self.init_ui(ini_file)
@@ -20,32 +21,7 @@ class KeyInput(QWidget):
         self.infoLabel = QLabel(f"Лаборант: {main.info["fullName"]}\nСпектрометр: {main.info["spectrometer"]}\nПроба: {main.info["sample"]}", self)
         self.infoLabel.setFont(QFont("Arial", 10))
 
-        # self.lineEdit = QLineEdit(self)
-        self.key2Label = QLabel("Ключ 2:")
-        self.key2Label.setFont(QFont("Arial", 10))
-        self.key4Label = QLabel("Ключ 4:")
-        self.key4Label.setFont(QFont("Arial", 10))
-        self.key2 = QComboBox(self)
-        self.key4 = QComboBox(self)
-
-        valueKey2 = config.get('Settings', 'key2').split(",")
-
-        for value in valueKey2:
-            self.key2.addItem(value)
-
-        valueKey4 = config.get('Settings', 'key4').split(",")
-
-        for value in valueKey4:
-            self.key4.addItem(value)
-
-        self.keysLabel = QHBoxLayout()
-        self.keysLabel.addWidget(self.key2Label)
-        self.keysLabel.addWidget(self.key2)
-        self.keysLabel.addWidget(self.key4Label)
-        self.keysLabel.addWidget(self.key4)
-        self.keysLabel.setAlignment(Qt.AlignCenter)
-
-        self.messageLabel = QLabel("", self)
+        self.fileName = QLineEdit(f"{datetime.now()}", self)
 
         self.backButton = QPushButton(config.get('Buttons', 'back'), self)
         self.backButton.clicked.connect(self.go_back)
@@ -60,12 +36,11 @@ class KeyInput(QWidget):
         self.infomation = QHBoxLayout()
         self.infomation.addStretch()
         self.infomation.addWidget(self.infoLabel)
+        self.infomation.addWidget(self.fileName)
         self.infomation.addStretch()
 
         self.layout = QVBoxLayout()
         self.layout.addLayout(self.infomation)
-        self.layout.addWidget(self.messageLabel)
-        self.layout.addLayout(self.keysLabel)
         self.layout.addLayout(self.buttonLayout)
 
         self.setLayout(self.layout)
@@ -74,7 +49,7 @@ class KeyInput(QWidget):
 
     def go_back(self):
         self.close()
-        main.start_third_stage(self.main_window)
+        main.start_fourth_stage(self.main_window)
 
     def next_stage(self):
-        main.start_fifth_stage(self.main_window)
+        main.start_first_stage(self.main_window)
