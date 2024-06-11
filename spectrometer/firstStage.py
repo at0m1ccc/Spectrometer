@@ -6,6 +6,7 @@ import main
 
 class FIOInput(QWidget):
     def __init__(self, ini_file, main_window):
+        main.NumberStage = 1
         super().__init__()
         self.main_window = main_window
         self.fullName = None
@@ -15,7 +16,7 @@ class FIOInput(QWidget):
         config = configparser.ConfigParser()
         config.read(ini_file, encoding='utf-8')
 
-        self.main_window.setWindowTitle(config['MainWindow']['title'])
+        self.main_window.setWindowTitle(config['MainWindow.firstStage']['title'])
 
         self.label = QLabel(config['Label']['text'], self)
         self.label.setAlignment(Qt.AlignCenter)
@@ -49,15 +50,15 @@ class FIOInput(QWidget):
         self.setLayout(layout)
 
     def apply_full_name(self):
-        self.fullName = self.lineEdit.currentText()
-        if self.fullName:
-            self.messageLabel.setText('ФИО применено: ' + self.fullName)
+        main.info["fullName"] = self.lineEdit.currentText()
+        if main.info["fullName"]:
+            self.messageLabel.setText('ФИО применено: ' + main.info["fullName"])
         else:
             self.messageLabel.setText('Сначала выберите фио!')
 
     def next_stage(self):
-        if not self.fullName:
+        if not main.info["fullName"]:
             self.messageLabel.setText('Сначала выберите фио!')
             return
-
-        main.start_second_stage(self.main_window, self.fullName)
+        else:
+            main.start_second_stage(self.main_window)

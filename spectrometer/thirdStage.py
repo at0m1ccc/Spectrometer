@@ -5,12 +5,10 @@ import configparser
 
 
 class SampleInput(QWidget):
-    def __init__(self, fullName, spectrometerName, ini_file, main_window):
+    def __init__(self, ini_file, main_window):
+        main.NumberStage = 3
         super().__init__()
         self.main_window = main_window
-        self.fullName = fullName
-        self.spectrometerName = spectrometerName
-        self.sampleName = None
         self.init_ui(ini_file)
 
     def init_ui(self, ini_file):
@@ -18,7 +16,7 @@ class SampleInput(QWidget):
         config.read(ini_file, encoding='utf-8')
         self.main_window.setWindowTitle(config.get('Settings', 'window_title'))
 
-        self.infoLabel = QLabel(f"Лаборант {self.fullName}\nСпектрометр: {self.spectrometerName}", self)
+        self.infoLabel = QLabel(f"Лаборант {main.info["fullName"]}\nСпектрометр: {main.info["spectrometer"]}", self)
         self.infoLabel.setFont(QFont("Arial", 9))
 
         self.label = QLabel(config.get('Settings', 'sample_name'), self)
@@ -72,20 +70,20 @@ class SampleInput(QWidget):
 
     def go_back(self):
         self.close()
-        main.start_second_stage(self.main_window, self.fullName)
+        main.start_second_stage(self.main_window)
 
     def apply_sample(self):
         if self.lineEdit.text() != '':
-            self.sampleName = self.lineEdit.text()
-            self.infoLabel.setText(f"Лаборант {self.fullName}\nСпектрометр: {self.spectrometerName}\nПроба: {self.sampleName}")
+            main.info["sample"] = self.lineEdit.text()
+            self.infoLabel.setText(f"Лаборант {main.info["fullName"]}\nСпектрометр: {main.info["spectrometer"]}\nПроба: {main.info["sample"]}")
         else:
             self.messageLabel.setText('Сначала введите название пробы!')
 
     def next_stage(self):
-        if self.lineEdit.text() == '' and self.sampleName is None:
+        if self.lineEdit.text() == '' and main.info["sample"] is '':
             self.messageLabel.setText('Сначала введите название пробы!')
             return
-        elif self.lineEdit.text() is not None and self.sampleName is None:
-            self.sampleName = self.lineEdit.text()
+        elif self.lineEdit.text() is not None and main.info["sample"] is '':
+            main.info["sample"] = self.lineEdit.text()
 
-        main.start_fourth_stage(self.main_window, self.fullName, self.spectrometerName, self.sampleName)
+        main.start_fourth_stage(self.main_window)

@@ -6,12 +6,10 @@ import configparser
 
 
 class KeyInput(QWidget):
-    def __init__(self, fullName, spectrometerName, sampleName, ini_file, main_window):
+    def __init__(self, ini_file, main_window):
+        main.NumberStage = 4
         super().__init__()
         self.main_window = main_window
-        self.fullName = fullName
-        self.spectrometerName = spectrometerName
-        self.sampleName = sampleName
         self.init_ui(ini_file)
 
     def init_ui(self, ini_file):
@@ -19,7 +17,7 @@ class KeyInput(QWidget):
         config.read(ini_file, encoding='utf-8')
         self.main_window.setWindowTitle(config.get('Settings', 'window_title'))
 
-        self.infoLabel = QLabel(f"Лаборант: {self.fullName}\nСпектрометр: {self.spectrometerName}\nПроба: {self.sampleName}", self)
+        self.infoLabel = QLabel(f"Лаборант: {main.info["fullName"]}\nСпектрометр: {main.info["spectrometer"]}\nПроба: {main.info["sample"]}", self)
         self.infoLabel.setFont(QFont("Arial", 10))
 
         # self.lineEdit = QLineEdit(self)
@@ -76,7 +74,7 @@ class KeyInput(QWidget):
 
     def go_back(self):
         self.close()
-        main.start_third_stage(self.main_window, self.fullName, self.spectrometerName)
+        main.start_third_stage(self.main_window)
 
     def next_stage(self):
         main.start_first_stage(self.main_window)
