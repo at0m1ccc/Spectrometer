@@ -7,6 +7,7 @@ import main
 class FIOInput(QWidget):
     def __init__(self, ini_file, main_window):
         main.NumberStage = 1
+        main.configFile = ini_file
         super().__init__()
         self.main_window = main_window
         self.fullName = None
@@ -26,6 +27,8 @@ class FIOInput(QWidget):
         laborants = config.get('LineEdit', 'laborants').split(',')
         for laborant in laborants:
             self.lineEdit.addItem(laborant.strip())
+
+        self.lineEdit.setEditable(True)
 
         self.applyButton = QPushButton(config['ApplyButton']['text'], self)
         self.applyButton.clicked.connect(self.apply_full_name)
@@ -50,15 +53,29 @@ class FIOInput(QWidget):
         self.setLayout(layout)
 
     def apply_full_name(self):
+        config = configparser.ConfigParser()
+        config.read('config1Stage.ini', encoding='utf-8')
         main.info["fullName"] = self.lineEdit.currentText()
         if main.info["fullName"]:
-            self.messageLabel.setText('ФИО применено: ' + main.info["fullName"])
+            self.messageLabel.setText('ФИО применено: ' + main.info['fullName'])
+            if main.info['fullName'] not in config.get('LineEdit', 'laborants'):
+                config['LineEdit']['laborants'] = f'{main.info['fullName']}, {config.get('LineEdit', 'laborants')}'
+                with open('config1Stage.ini', 'w', encoding='utf-8') as configfile:
+                    config.write(configfile)
         else:
             self.messageLabel.setText('Сначала выберите фио!')
 
     def next_stage(self):
+        config = configparser.ConfigParser()
+        config.read('config1Stage.ini', encoding='utf-8')
+        main.info["fullName"] = self.lineEdit.currentText()
         if not main.info["fullName"]:
             self.messageLabel.setText('Сначала выберите фио!')
             return
         else:
+            self.messageLabel.setText('ФИО применено: ' + main.info["fullName"])
+            if main.info['fullName'] not in config.get('LineEdit', 'laborants'):
+                config['LineEdit']['laborants'] = f'{main.info['fullName']}, {config.get('LineEdit', 'laborants')}'
+                with open('config1Stage.ini', 'w', encoding='utf-8') as configfile:
+                    config.write(configfile)
             main.start_second_stage(self.main_window)

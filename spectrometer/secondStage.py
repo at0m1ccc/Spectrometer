@@ -7,6 +7,7 @@ import configparser
 class SpectrometerInput(QWidget):
     def __init__(self, ini_file, main_window):
         main.NumberStage = 2
+        main.configFile = ini_file
         super().__init__()
         self.main_window = main_window
         self.init_ui(ini_file)
@@ -28,6 +29,8 @@ class SpectrometerInput(QWidget):
         list_spectrs = config.get('Settings', 'spectrometers').split(",")
         for spectrometer in list_spectrs:
             self.spectrometers.addItem(spectrometer)
+
+        self.spectrometers.setEditable(True)
 
         self.backButton = QPushButton(config.get('Buttons', 'back'), self)
         self.backButton.clicked.connect(self.go_back)
@@ -72,15 +75,28 @@ class SpectrometerInput(QWidget):
         main.start_first_stage(self.main_window)
 
     def apply_spectrometer(self):
+        config = configparser.ConfigParser()
+        config.read('config2Stage.ini', encoding='utf-8')
+
         main.info["spectrometer"] = self.spectrometers.currentText()
         if main.info["spectrometer"]:
             self.infoLabel.setText(f"Лаборант {main.info["fullName"]}\n{main.info["spectrometer"]}")
+            if main.info['spectrometer'] not in config.get('Settings', 'spectrometers'):
+                config['Settings']['spectrometers'] = f'{main.info['spectrometer']}, {config.get('Settings', 'spectrometers')}'
+                with open('config2Stage.ini', 'w', encoding='utf-8') as configfile:
+                    config.write(configfile)
         else:
             self.messageLabel.setText('Сначала выберите cпектрометр!')
 
     def next_stage(self):
+        config = configparser.ConfigParser()
+        config.read('config2Stage.ini', encoding='utf-8')
         main.info["spectrometer"] = self.spectrometers.currentText()
         if main.info["spectrometer"]:
+            if main.info['spectrometer'] not in config.get('Settings', 'spectrometers'):
+                config['Settings']['spectrometers'] = f'{main.info['spectrometer']}, {config.get('Settings', 'spectrometers')}'
+                with open('config2Stage.ini', 'w', encoding='utf-8') as configfile:
+                    config.write(configfile)
             main.start_third_stage(self.main_window)
         else:
             self.messageLabel.setText('Сначала выберите cпектрометр!')

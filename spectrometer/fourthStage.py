@@ -8,6 +8,7 @@ import configparser
 class KeyInput(QWidget):
     def __init__(self, ini_file, main_window):
         main.NumberStage = 4
+        main.configFile = ini_file
         super().__init__()
         self.main_window = main_window
         self.init_ui(ini_file)
