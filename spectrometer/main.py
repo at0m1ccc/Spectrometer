@@ -1,6 +1,6 @@
 import os
+import socket
 import sys
-import fcntl
 from PyQt5.QtWidgets import QApplication, QMainWindow, QWidget, QHBoxLayout, QPushButton, QVBoxLayout, QStatusBar, \
     QMessageBox
 
@@ -46,7 +46,7 @@ class MainWindow(QMainWindow):
 
 
 def main():
-    lock_fd = acquire_lock()
+    sock = acquire_lock()
 
     try:
         app = QApplication(sys.argv)
@@ -57,7 +57,7 @@ def main():
         main_window.show()
         sys.exit(app.exec_())
     finally:
-        release_lock(lock_fd)
+        release_lock(sock)
 
 
 def start_first_stage(main_window):
@@ -85,22 +85,26 @@ def start_fifth_stage(main_window):
         os.path.join(os.path.dirname(__file__), 'config5Stage.ini'), main_window))
 
 
-LOCK_FILE = '/tmp/my_app.lock'
+HOST = '127.0.0.1'
+PORT = 9999
 
 
 def acquire_lock():
     try:
-        lock_fd = os.open(LOCK_FILE, os.O_CREAT | os.O_EXCL | os.O_RDONLY)
-        return lock_fd
-    except FileExistsError:
-        print("Программа уже запущена. Выход.")
+        # Создаем сокет и привязываем его к указанному хосту и порту
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        sock.bind((HOST, PORT))
+        sock.listen(1)  # Разрешаем только одно подключение (экземпляр программы)
+        print(f"Программа запущена на порту {PORT}")
+        return sock
+    except OSError as e:
+        # Если порт уже занят, программа уже запущена
+        print(f"Программа уже запущена. Ошибка: {e}")
         sys.exit(1)
 
 
-def release_lock(lock_fd):
-    os.close(lock_fd)
-    os.remove(LOCK_FILE)
-
+def release_lock(sock):
+    sock.close()
 
 if __name__ == '__main__':
     main()

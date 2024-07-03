@@ -3,6 +3,7 @@ from PyQt5.QtWidgets import QWidget, QLabel, QLineEdit, QHBoxLayout, QVBoxLayout
 from PyQt5.QtGui import QFont
 import main
 import configparser
+import example
 from datetime import datetime
 
 
@@ -53,4 +54,4 @@ class OutputStage(QWidget):
         main.start_fourth_stage(self.main_window)
 
     def next_stage(self):
-        main.start_first_stage(self.main_window)
+        example.main()
